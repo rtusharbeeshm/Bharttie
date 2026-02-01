@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Bharttie ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -18,7 +19,6 @@
             text-align: center;
         }
         
-        /* Starting Screen */
         #overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -43,7 +43,6 @@
         .envelope-btn:hover { transform: scale(1.1); }
         .overlay-text { color: #d32f2f; margin-top: 20px; font-weight: bold; font-size: 1.2rem; }
 
-        /* Main Container - Fades in after 15s */
         .container { 
             display: none; 
             opacity: 0; 
@@ -77,7 +76,7 @@
         #successState { display: none; flex-direction: column; align-items: center; }
         
         .celebration-img { 
-            width: 350px; 
+            width: 320px; 
             border-radius: 20px; 
             margin: 20px 0; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -118,7 +117,7 @@
         <div id="successState">
             <h1>YAYYY! 🥰</h1>
             <img src="unnamed.jpg" id="catImg" class="celebration-img" alt="Valentine Cat">
-            <button id="lastBtn" class="final-btn" onclick="closeWebsite()">Pyaari lugai, lyo sa.</button>
+            <button id="lastBtn" class="final-btn" onclick="closeAndNotify()">Pyaari lugai, lyo sa.</button>
         </div>
     </div>
 
@@ -137,28 +136,19 @@
         const s2 = document.getElementById('song2');
 
         function handleStart() {
-            // 1. Play song IMMEDIATELY on click
             s1.play().catch(e => console.log("Audio play blocked"));
-
-            // 2. Change UI to show loading state
             document.getElementById('envBtn').style.opacity = "0.5";
             document.getElementById('statusText').innerText = "Something is coming...";
-            
-            // 3. Wait for 15 seconds while music plays
             setTimeout(revealContent, 15000);
         }
 
         function revealContent() {
             const overlay = document.getElementById('overlay');
             const mainContent = document.getElementById('mainContent');
-            
-            // Fade out the pink screen
             overlay.style.opacity = '0';
-            
             setTimeout(() => {
                 overlay.style.display = 'none';
                 mainContent.style.display = 'block';
-                // Fade in the question
                 setTimeout(() => { mainContent.style.opacity = '1'; }, 50);
             }, 2000); 
         }
@@ -167,18 +157,15 @@
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
             attemptCount++;
-
             if (attemptCount >= maxAttempts) {
                 noBtn.style.display = 'none'; 
                 return;
             }
-
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
             noBtn.style.position = 'fixed';
             noBtn.style.left = x + 'px';
             noBtn.style.top = y + 'px';
-
             noBtn.style.transform = `scale(${1 - (attemptCount * 0.06)})`;
             yesBtn.style.transform = `scale(${1 + (attemptCount * 0.25)})`;
         }
@@ -188,26 +175,38 @@
             s1.pause();
             s1.currentTime = 0;
             s2.play();
-
             document.getElementById('question').style.display = 'none';
             document.getElementById('initialButtons').style.display = 'none';
             document.getElementById('successState').style.display = 'flex';
-            
             setTimeout(() => { document.getElementById('catImg').style.opacity = '1'; }, 100);
-
             var end = Date.now() + (5 * 1000);
             (function frame() {
               confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4081', '#ff1744'] });
               confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4081', '#ff1744'] });
               if (Date.now() < end) requestAnimationFrame(frame);
             }());
-
             setTimeout(() => { document.getElementById('lastBtn').style.display = 'block'; }, 15000);
         }
 
-        function closeWebsite() {
-            window.close();
-            setTimeout(function() { window.location.href = "about:blank"; }, 100);
+        function closeAndNotify() {
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    access_key: 'c080d4ee-bad7-48dd-9644-34d538ca885a',
+                    subject: 'VALENTINE ALERT! ❤️',
+                    message: 'Bharttie just clicked the final button! She said YES!'
+                })
+            })
+            .then(() => {
+                window.alert("Notification sent! I've been told you said yes. 🥰");
+                window.close();
+                setTimeout(() => { window.location.href = "about:blank"; }, 500);
+            })
+            .catch(() => {
+                window.alert("Happy Valentine's Day! ❤️");
+                window.location.href = "about:blank";
+            });
         }
     </script>
 </body>
