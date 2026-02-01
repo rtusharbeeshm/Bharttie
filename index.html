@@ -19,6 +19,7 @@
             text-align: center;
         }
         
+        /* Starting Screen */
         #overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -43,6 +44,7 @@
         .envelope-btn:hover { transform: scale(1.1); }
         .overlay-text { color: #d32f2f; margin-top: 20px; font-weight: bold; font-size: 1.2rem; }
 
+        /* Main Container - Fades in after 15s */
         .container { 
             display: none; 
             opacity: 0; 
@@ -136,9 +138,12 @@
         const s2 = document.getElementById('song2');
 
         function handleStart() {
+            // Play Song 1 immediately
             s1.play().catch(e => console.log("Audio play blocked"));
             document.getElementById('envBtn').style.opacity = "0.5";
             document.getElementById('statusText').innerText = "Something is coming...";
+            
+            // 15 second suspense before reveal
             setTimeout(revealContent, 15000);
         }
 
@@ -178,13 +183,19 @@
             document.getElementById('question').style.display = 'none';
             document.getElementById('initialButtons').style.display = 'none';
             document.getElementById('successState').style.display = 'flex';
+            
+            // Slow fade for image
             setTimeout(() => { document.getElementById('catImg').style.opacity = '1'; }, 100);
+            
+            // Confetti
             var end = Date.now() + (5 * 1000);
             (function frame() {
               confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4081', '#ff1744'] });
               confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4081', '#ff1744'] });
               if (Date.now() < end) requestAnimationFrame(frame);
             }());
+
+            // Final button pops up after 15s of Song 2
             setTimeout(() => { document.getElementById('lastBtn').style.display = 'block'; }, 15000);
         }
 
