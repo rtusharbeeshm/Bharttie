@@ -19,7 +19,6 @@
             text-align: center;
         }
         
-        /* Starting Screen */
         #overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -33,71 +32,40 @@
             transition: opacity 2s ease;
         }
 
-        .envelope-btn {
-            font-size: 100px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
+        .envelope-btn { font-size: 100px; background: none; border: none; cursor: pointer; transition: transform 0.3s; }
         .envelope-btn:hover { transform: scale(1.1); }
         .overlay-text { color: #d32f2f; margin-top: 20px; font-weight: bold; font-size: 1.2rem; }
 
-        /* Main Container - Fades in after 15s */
-        .container { 
-            display: none; 
-            opacity: 0; 
-            transition: opacity 3s ease; 
-        } 
-        
+        #progressWrap { width: 200px; height: 10px; background: #f8bbd0; border-radius: 5px; margin-top: 20px; display: none; overflow: hidden; }
+        #progressBar { width: 0%; height: 100%; background: #ff4081; transition: width 15s linear; }
+
+        .container { display: none; opacity: 0; transition: opacity 3s ease; } 
         h1 { color: #d32f2f; margin-bottom: 30px; font-size: 2.5rem; }
         
-        .button-group {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            min-height: 200px;
-        }
+        .button-group { display: flex; gap: 20px; justify-content: center; align-items: center; position: relative; min-height: 250px; width: 100%; }
         
-        button {
-            padding: 15px 35px;
-            font-size: 20px;
-            border-radius: 15px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            font-weight: bold;
-        }
+        button { padding: 15px 35px; font-size: 20px; border-radius: 15px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-weight: bold; }
 
         #yesBtn { background-color: #ff4081; color: white; z-index: 10; transition: transform 0.2s; }
         #noBtn { background-color: #9e9e9e; color: white; transition: 0.1s; position: relative; }
 
         #successState { display: none; flex-direction: column; align-items: center; }
-        
-        .celebration-img { 
-            width: 320px; 
-            border-radius: 20px; 
-            margin: 20px 0; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            opacity: 0; 
-            transition: opacity 5s ease-in; 
-        }
+        .celebration-img { width: 320px; border-radius: 20px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2); opacity: 0; transition: opacity 5s ease-in; }
 
+        /* PULSING FINAL BUTTON */
         .final-btn { 
             display: none; 
             background-color: #d32f2f; 
             color: white; 
             font-size: 22px; 
-            padding: 20px 40px;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 20px 40px; 
+            animation: pulse 1.5s infinite; 
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(211, 47, 47, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
         }
     </style>
 </head>
@@ -106,30 +74,26 @@
     <div id="overlay" onclick="handleStart()">
         <button class="envelope-btn" id="envBtn">💌</button>
         <h2 class="overlay-text" id="statusText">Open your surprise, Bharttie...</h2>
+        <div id="progressWrap">
+            <div id="progressBar"></div>
+        </div>
     </div>
 
     <div class="container" id="mainContent">
         <h1 id="question">Bharttie, will you be my Valentine? ❤️</h1>
-        
         <div id="initialButtons" class="button-group">
             <button id="yesBtn" onclick="celebrate(event)">Yes</button>
             <button id="noBtn" onmouseover="moveAndRescale()">No</button>
         </div>
-
         <div id="successState">
-            <h1>YAYYY! 🥰</h1>
+            <h1 id="finalHeading">YAYYY! 🥰</h1>
             <img src="unnamed.jpg" id="catImg" class="celebration-img" alt="Valentine Cat">
             <button id="lastBtn" class="final-btn" onclick="closeAndNotify()">Pyaari lugai, lyo sa.</button>
         </div>
     </div>
 
-    <audio id="song1" loop>
-        <source src="dooron-dooron-official-video-paresh-pahuja-feat-harleen-sethi-shiv-meghdeep-v_qRDAswtE.mp3" type="audio/mpeg">
-    </audio>
-
-    <audio id="song2" loop>
-        <source src="dil-ka-jo-haal-hai-lyrical-besharam-ranbir-kapoor-abhijeet-bhattacharya-shrey_Prz0EzPj.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="song1" loop><source src="dooron-dooron-official-video-paresh-pahuja-feat-harleen-sethi-shiv-meghdeep-v_qRDAswtE.mp3" type="audio/mpeg"></audio>
+    <audio id="song2" loop><source src="dil-ka-jo-haal-hai-lyrical-besharam-ranbir-kapoor-abhijeet-bhattacharya-shrey_Prz0EzPj.mp3" type="audio/mpeg"></audio>
 
     <script>
         let attemptCount = 0;
@@ -138,12 +102,11 @@
         const s2 = document.getElementById('song2');
 
         function handleStart() {
-            // Play Song 1 immediately
-            s1.play().catch(e => console.log("Audio play blocked"));
+            s1.play().catch(e => console.log("Audio blocked"));
             document.getElementById('envBtn').style.opacity = "0.5";
-            document.getElementById('statusText').innerText = "Something is coming...";
-            
-            // 15 second suspense before reveal
+            document.getElementById('statusText').innerText = "Opening your surprise...❤️";
+            document.getElementById('progressWrap').style.display = 'block';
+            setTimeout(() => { document.getElementById('progressBar').style.width = '100%'; }, 100);
             setTimeout(revealContent, 15000);
         }
 
@@ -162,32 +125,28 @@
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
             attemptCount++;
-            if (attemptCount >= maxAttempts) {
-                noBtn.style.display = 'none'; 
-                return;
+            if (attemptCount >= maxAttempts) { noBtn.style.display = 'none'; return; }
+            const yesRect = yesBtn.getBoundingClientRect();
+            let newX, newY, overlaps = true;
+            while (overlaps) {
+                newX = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+                newY = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+                overlaps = !(newX + noBtn.offsetWidth < yesRect.left - 20 || newX > yesRect.right + 20 || newY + noBtn.offsetHeight < yesRect.top - 20 || newY > yesRect.bottom + 20);
             }
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
             noBtn.style.position = 'fixed';
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
+            noBtn.style.left = newX + 'px'; noBtn.style.top = newY + 'px';
             noBtn.style.transform = `scale(${1 - (attemptCount * 0.06)})`;
             yesBtn.style.transform = `scale(${1 + (attemptCount * 0.25)})`;
         }
 
         function celebrate(event) {
             event.stopPropagation();
-            s1.pause();
-            s1.currentTime = 0;
-            s2.play();
+            s1.pause(); s2.play();
             document.getElementById('question').style.display = 'none';
             document.getElementById('initialButtons').style.display = 'none';
             document.getElementById('successState').style.display = 'flex';
-            
-            // Slow fade for image
             setTimeout(() => { document.getElementById('catImg').style.opacity = '1'; }, 100);
             
-            // Confetti
             var end = Date.now() + (5 * 1000);
             (function frame() {
               confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4081', '#ff1744'] });
@@ -195,8 +154,13 @@
               if (Date.now() < end) requestAnimationFrame(frame);
             }());
 
-            // Final button pops up after 15s of Song 2
-            setTimeout(() => { document.getElementById('lastBtn').style.display = 'block'; }, 15000);
+            // Logic to make sure she clicks the final button
+            setTimeout(() => { 
+                document.getElementById('finalHeading').innerText = "One last thing... ❤️";
+                const lastBtn = document.getElementById('lastBtn');
+                lastBtn.style.display = 'block';
+                lastBtn.scrollIntoView({ behavior: 'smooth' }); // Scrolls to the button
+            }, 15000);
         }
 
         function closeAndNotify() {
@@ -213,10 +177,6 @@
                 window.alert("Notification sent! I've been told you said yes. 🥰");
                 window.close();
                 setTimeout(() => { window.location.href = "about:blank"; }, 500);
-            })
-            .catch(() => {
-                window.alert("Happy Valentine's Day! ❤️");
-                window.location.href = "about:blank";
             });
         }
     </script>
