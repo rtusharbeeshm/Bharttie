@@ -60,6 +60,7 @@
             font-size: 22px; 
             padding: 20px 40px; 
             animation: pulse 1.5s infinite; 
+            margin-top: 20px;
         }
 
         @keyframes pulse {
@@ -154,12 +155,10 @@
               if (Date.now() < end) requestAnimationFrame(frame);
             }());
 
-            // Logic to make sure she clicks the final button
             setTimeout(() => { 
-                document.getElementById('finalHeading').innerText = "One last thing... ❤️";
                 const lastBtn = document.getElementById('lastBtn');
                 lastBtn.style.display = 'block';
-                lastBtn.scrollIntoView({ behavior: 'smooth' }); // Scrolls to the button
+                lastBtn.scrollIntoView({ behavior: 'smooth' });
             }, 15000);
         }
 
